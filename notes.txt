@@ -1,0 +1,27 @@
+8x32 grid
+4 encoders
+4 screens? Maybe 1 good screen is better
+
+
+neotrellis > listener
+- fire event on push
+- set push time
+- fire click event on release, if short pushtime
+- fire hold/right-click event if long pushtime (on release?)
+
+
+Note grid
+- Notes should include duration, velocity, mod-cc
+- Click to add note
+- click again to select, for duration, velocity, etc
+- hold/right-clight to delete? Or vice-versa?
+
+Midi out
+- When note fires, keep track of which are still playing
+- Keep track of intended duration
+- count duration according to midi click
+- at each click, decide which notes need to be turned off
+
+
+
+How to mock hardware for local testing?
