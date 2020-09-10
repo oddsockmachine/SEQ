@@ -3,15 +3,6 @@ from actors import ActorThread, bus_registry, actor_registry, post, receive
 from datetime import datetime
 from pprint import pprint
 
-# class NoteGrid(ActorThread):
-#     """Listen to button presses, forward different click events"""
-#     def __init__(self):
-#         super().__init__()
-
-
-#     def event_loop(self):
-#         # {'event': 'press/release', 'x': 0-31, 'y': 0-31}
-#         msg = receive('trellis')
 
 class NoteGrid():
     """DataStructure to store notes on a grid"""
@@ -47,7 +38,23 @@ class NoteGrid():
             return int(b)
         return 0
 
+    def set_velocity(x,y,v):
+        # TODO constrain
+        self.grid[y][x].velocity = v
+        return
+
+    def set_duration(x,y,d):
+        # TODO constrain
+        self.grid[y][x].duration = d
+        return
+    
+    def set_modulation(x,y,d):
+        # TODO constrain
+        self.grid[y][x].modulation = d
+        return
+
     def display(self):
+        """Return a grid representing LEd brightnesses based on Note velocties/durations"""
         d = [[0 for x in range(self.w)] for y in range(self.h)]
         for y, row in enumerate(self.grid):
             for x, note in enumerate(row):
@@ -59,6 +66,8 @@ class NoteGrid():
                     for s in range(1,note.duration):  # For each cell in the sustail tail
                         if not self.grid[y][x+s].active:  # Cutoff if other note here
                             d[y][x+s] = int(b/2)  # Tail is half brightness
+                        else:
+                            break
         return d
 
 
@@ -116,8 +125,8 @@ ng.add(20,5, 99, 64, duration=5)
 ng.add(20,6, 99, 64, duration=6)
 ng.add(20,7, 99, 64, duration=7)
 # and clipping
-ng.add(25,6, 99, 64, duration=1)
-ng.add(25,7, 99, 64, duration=1)
+ng.add(24,6, 99, 64, duration=1)
+ng.add(24,7, 99, 64, duration=1)
 
 
 print(ng)
