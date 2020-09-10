@@ -3,11 +3,18 @@
 4 screens? Maybe 1 good screen is better
 
 
-neotrellis > listener
-- fire event on push
-- set push time
-- fire click event on release, if short pushtime
-- fire hold/right-click event if long pushtime (on release?)
+        neotrellis > listener
+        - fire event on push
+        - set push time
+        - fire click event on release, if short pushtime
+        - fire hold/right-click event if long pushtime (on release?)
+
+        Midi out
+        - When note fires, keep track of which are still playing
+        - Keep track of intended duration
+        - count duration according to midi click
+        - at each click, decide which notes need to be turned off
+
 
 
 Note grid
@@ -15,12 +22,14 @@ Note grid
 - Click to add note
 - click again to select, for duration, velocity, etc
 - hold/right-clight to delete? Or vice-versa?
-
-Midi out
-- When note fires, keep track of which are still playing
-- Keep track of intended duration
-- count duration according to midi click
-- at each click, decide which notes need to be turned off
+- NoteGrid just shows whether there's a note, velocity, duration
+- NG also shows LED status based on duration, velocity
+- velocity 0-127 maps to brightness 64-127
+- tail/sustain has brightness 0-63
+- Instrument has a note converter to handle pitch according to scale
+- Instrument handles clicks, long-clicks, etc
+- Also Channel per Instrument
+- Instrument handles color scheme, NG just returns brightness
 
 
 

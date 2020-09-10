@@ -2,42 +2,60 @@ from constants import debug
 from actors import ActorThread, bus_registry, actor_registry, post, receive
 from datetime import datetime
 
+from time import sleep
+import mido
+
+
+class MidiClock(ActorThread):
+    """Creates a regular Midi clock beat for internal and external sync"""
+    def __init__(self, bpm):
+        super().__init__()
+        self.bpm = bpm
+        self.delay_s = 60 / bpm / 4
+
+    def event_loop(self):
+        sleep(self.delay_s)
+        post("midi_out", {'type': "tick"})
 
 class MidiOut(ActorThread):
-    """Listen to button presses, forward different click events"""
-    # event: press/release
-    # x, y: 0-31.0-31
+    """Handle sending Midi messages to external devices"""
     def __init__(self):
         super().__init__()
         self.notes_on = {}
+        self.internal_clock = 0
 
     def event_loop(self):
+        # {'type': 'note_on', 'note': 22, 'channel': 1, 'velocity': 99, 'duration': 1}
         msg = receive('midi_out')
-        # TODO need regular midi clock here to trigger note off events
-        note = msg.get('note')
-        channel = msg.get('channel')
-        vel = msg.get('velocity')
-        duration = msg.get('duration')
-        # midi.write(midi(channel, note, vel))
-        n_id = f"{channel}.{note}"
-        if n_id not in self.notes_on:  # TODO what about 2 same notes, different durations? Choke or sustain?
-            msg['stop_time']
-            self.notes_on[n_id] = msg
-        
-        for msg in self.notes_on:
-            if msg.duration
+        if msg.get('type') == 'tick':
+            self.internal_clock += 1
+            off_notes = [note_id for note_id, off_time in self.notes_on.items() if off_time <= self.internal_clock] 
+            for off_note in off_notes:
+                channel, note = off_note.split('.')
+                print(mido.Message('note_off', note=int(note), channel=int(channel)))
+                self.notes_on.pop(off_note)
+        if msg.get('type') == 'note_on':
+            print(mido.Message('note_on', note=msg['note'], channel=msg['channel'], velocity=msg['velocity']))
+            # Send
+            id = f"{msg['channel']}.{msg['note']}"
+            self.notes_on[id] = self.internal_clock + msg['duration']
+        return
 
-        # k_id = f"{x}.{y}"
-        # if event == "release":
-        #     if k_id in self.button_states:
-        #         hold_time = datetime.now() - self.button_states.get(k_id)
-        #         self.button_states.pop(k_id)
-        #         if int(hold_time.microseconds) > self.long_click_us:
-        #             msg['event'] = "long_click"
-        #         else:
-        #             msg['event'] = "short_click"
-        #         post('action', msg)
-        # if event == "press":
-        #     self.button_states[k_id] = datetime.now()
-        #     msg['event'] = "touch"
-        #     post('action', msg)
+
+if __name__ == "__main__":
+    midi_bus = bus_registry.bus('midi_out')
+    m = MidiOut()
+    c = MidiClock(120)
+    m.start()
+    c.start()
+    # midi_bus.put(mido.Message('note_on', note=55, channel=1, velocity=99, duration=3))
+    midi_bus.put({'type': 'note_on', 'note': 33, 'channel': 1, 'velocity': 99, 'duration': 5})
+    midi_bus.put({'type': 'note_on', 'note': 22, 'channel': 1, 'velocity': 99, 'duration': 4})
+    sleep(1)
+    midi_bus.put({'type': 'note_on', 'note': 22, 'channel': 2, 'velocity': 99, 'duration': 6})
+    midi_bus.put({'type': 'note_on', 'note': 22, 'channel': 1, 'velocity': 99, 'duration': 1})
+    sleep(0.2)
+    midi_bus.put({'type': 'note_on', 'note': 22, 'channel': 2, 'velocity': 99, 'duration': 1})
+    midi_bus.put({'type': 'note_on', 'note': 22, 'channel': 1, 'velocity': 99, 'duration': 3})
+    
+    sleep(1)

@@ -5,14 +5,13 @@ from datetime import datetime
 
 class Trellis(ActorThread):
     """Listen to button presses, forward different click events"""
-    # event: press/release
-    # x, y: 0-31.0-31
     def __init__(self):
         super().__init__()
         self.button_states = {}
         self.long_click_us = 500000
 
     def event_loop(self):
+        # {'event': 'press/release', 'x': 0-31, 'y': 0-31}
         msg = receive('trellis')
         event = msg.get('event')
         x = msg.get('x')
