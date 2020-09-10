@@ -1,5 +1,4 @@
 from constants import debug
-from actors import ActorThread, bus_registry, actor_registry, post, receive
 from datetime import datetime
 from pprint import pprint
 
@@ -98,37 +97,37 @@ class Note():
         else:
             return "Empty note"
 
+if __name__ == '__main__':
+    n = Note()
+    print(n)
+    n.on(33, 99, 4, 123)
+    print(n)
+    ng = NoteGrid()
+    # Random notes
+    ng.add(3,2, 99)
+    ng.add(5,4, 99)
+    ng.add(7,5, 99)
+    ng.add(8,5, 99)
+    ng.add(9,5, 99)
+    # Velocity > Brightness
+    ng.add(16,0, 99, 1)
+    ng.add(16,1, 99, 32)
+    ng.add(16,2, 99, 64)
+    ng.add(16,3, 99, 96)
+    ng.add(16,4, 99, 127)
+    # Sustain length
+    ng.add(20,1, 99, 64, duration=1)
+    ng.add(20,2, 99, 64, duration=2)
+    ng.add(20,3, 99, 64, duration=3)
+    ng.add(20,4, 99, 64, duration=4)
+    ng.add(20,5, 99, 64, duration=5)
+    ng.add(20,6, 99, 64, duration=6)
+    ng.add(20,7, 99, 64, duration=7)
+    # and clipping
+    ng.add(24,6, 99, 64, duration=1)
+    ng.add(24,7, 99, 64, duration=1)
 
-n = Note()
-print(n)
-n.on(33, 99, 4, 123)
-print(n)
-ng = NoteGrid()
-# Random notes
-ng.add(3,2, 99)
-ng.add(5,4, 99)
-ng.add(7,5, 99)
-ng.add(8,5, 99)
-ng.add(9,5, 99)
-# Velocity > Brightness
-ng.add(16,0, 99, 1)
-ng.add(16,1, 99, 32)
-ng.add(16,2, 99, 64)
-ng.add(16,3, 99, 96)
-ng.add(16,4, 99, 127)
-# Sustain length
-ng.add(20,1, 99, 64, duration=1)
-ng.add(20,2, 99, 64, duration=2)
-ng.add(20,3, 99, 64, duration=3)
-ng.add(20,4, 99, 64, duration=4)
-ng.add(20,5, 99, 64, duration=5)
-ng.add(20,6, 99, 64, duration=6)
-ng.add(20,7, 99, 64, duration=7)
-# and clipping
-ng.add(24,6, 99, 64, duration=1)
-ng.add(24,7, 99, 64, duration=1)
 
-
-print(ng)
-print()
-print(ng.display())
+    print(ng)
+    print()
+    print(ng.display())

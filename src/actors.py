@@ -36,21 +36,26 @@ class Actor_Registry(object):
 
 
 class ActorThread(Thread):
-    def __init__(self):
+    def __init__(self, bus=None):
         Thread.__init__(self, name=self.__class__.__name__)
         self.daemon = True
         self.keep_running = True
+        self.bus = bus
         actor_registry.add(self)
 
     def run(self):
         debug(f"{self.__class__.__name__} started")
         while self.keep_running:
             self.event_loop()
+
         debug(f"{self.__class__.__name__} killed")
         return
 
     def kill(self):
         self.keep_running = False
+    
+    def cb_none(self, msg):
+        debug(f"unknown callback triggered: {msg.get('event')}")
 
 def post(bus_name, msg):
     b = bus_registry.bus(bus_name)

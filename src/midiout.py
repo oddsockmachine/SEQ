@@ -28,19 +28,26 @@ class MidiOut(ActorThread):
         # {'type': 'note_on', 'note': 22, 'channel': 1, 'velocity': 99, 'duration': 1}
         msg = receive('midi_out')
         if msg.get('type') == 'tick':
-            self.internal_clock += 1
-            off_notes = [note_id for note_id, off_time in self.notes_on.items() if off_time <= self.internal_clock] 
-            for off_note in off_notes:
-                channel, note = off_note.split('.')
-                print(mido.Message('note_off', note=int(note), channel=int(channel)))
-                self.notes_on.pop(off_note)
+            self.cb_tick(msg)
+        if msg.get('type') == 'note_on':
+           self.cb_note_on(msg)
+        return
+
+    def cb_tick(self, msg):
+        self.internal_clock += 1
+        off_notes = [note_id for note_id, off_time in self.notes_on.items() if off_time <= self.internal_clock] 
+        for off_note in off_notes:
+            channel, note = off_note.split('.')
+            print(mido.Message('note_off', note=int(note), channel=int(channel)))
+            self.notes_on.pop(off_note)
+        return
+    def cb_note_on(self, msg):
         if msg.get('type') == 'note_on':
             print(mido.Message('note_on', note=msg['note'], channel=msg['channel'], velocity=msg['velocity']))
             # Send
             id = f"{msg['channel']}.{msg['note']}"
             self.notes_on[id] = self.internal_clock + msg['duration']
         return
-
 
 if __name__ == "__main__":
     midi_bus = bus_registry.bus('midi_out')
