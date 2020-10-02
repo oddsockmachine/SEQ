@@ -1,6 +1,6 @@
 from threading import Thread
 from constants import debug
-from buses import bus_registry
+from actors import bus_registry
 
 class Clock(Thread):
     """Listen on both midi and ticker clock buses, pass through clock messages based on chosen input"""

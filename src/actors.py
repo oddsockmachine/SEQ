@@ -42,6 +42,7 @@ class ActorThread(Thread):
         self.keep_running = True
         self.bus = bus
         actor_registry.add(self)
+        super().start()
 
     def run(self):
         debug(f"{self.__class__.__name__} started")
@@ -50,6 +51,10 @@ class ActorThread(Thread):
 
         debug(f"{self.__class__.__name__} killed")
         return
+
+    # def start(self):
+    #     super().start()
+    #     return self
 
     def kill(self):
         self.keep_running = False
