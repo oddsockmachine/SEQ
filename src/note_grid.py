@@ -1,13 +1,13 @@
 from constants import debug
 from datetime import datetime
 from pprint import pprint
-
+from config import H, W
 
 class NoteGrid():
     """DataStructure to store notes on a grid"""
     def __init__(self):
-        self.h = 8
-        self.w = 32
+        self.h = H
+        self.w = W
         self.grid = [[Note() for x in range(self.w)] for y in range(self.h)]
         # grid[y][x]
         # x x x x x x x x
@@ -19,6 +19,9 @@ class NoteGrid():
     def __repr__(self):
         return "\n".join([" ".join([str(x).ljust(3) for x in row]) for row in self.display()])
  
+    def notes_at(self, x):
+        return [self.grid[y][x] for y in range(H) if self.grid[y][x].active]
+
     def get(self, x, y):
         return self.grid[y][x]
     
@@ -26,12 +29,12 @@ class NoteGrid():
         self.grid[y][x].on(note, velocity, duration, modulation)
         return
 
-    def flip(self, x, y, note, velocity=64, duration=1, modulation=0):
+    def flip(self, x, y, n, velocity=64, duration=1, modulation=0):
         note = self.grid[y][x]
         if note.active:
             note.off()
         else:
-            note.on(note, velocity, duration, modulation)
+            note.on(n, velocity, duration, modulation)
             
     
     def off(self, x, y):
@@ -101,6 +104,7 @@ class Note():
     
     def __repr__(self):
         if self.active:
+            return str(type(self.note))
             return f"♪{self.note} v{self.velocity} b{self.duration} ~{self.modulation}"
         else:
             return "Empty note"

@@ -16,6 +16,7 @@ class MidiClock(ActorThread):
     def event_loop(self):
         sleep(self.delay_s)
         post("midi_out", {'type': "tick"})
+        post("conductor", {'event': "midi_tick"})
 
 class MidiOut(ActorThread):
     """Handle sending Midi messages to external devices"""
@@ -27,9 +28,9 @@ class MidiOut(ActorThread):
     def event_loop(self):
         # {'type': 'note_on', 'note': 22, 'channel': 1, 'velocity': 99, 'duration': 1}
         msg = receive('midi_out')
-        if msg.get('type') == 'tick':
+        if msg.get('event') == 'tick':
             self.cb_tick(msg)
-        if msg.get('type') == 'note_on':
+        if msg.get('event') == 'note_on':
            self.cb_note_on(msg)
         return
 
@@ -42,11 +43,13 @@ class MidiOut(ActorThread):
             self.notes_on.pop(off_note)
         return
     def cb_note_on(self, msg):
-        if msg.get('type') == 'note_on':
-            print(mido.Message('note_on', note=msg['note'], channel=msg['channel'], velocity=msg['velocity']))
-            # Send
-            id = f"{msg['channel']}.{msg['note']}"
-            self.notes_on[id] = self.internal_clock + msg['duration']
+        if msg.get('event') == 'note_on':
+            for n in msg.get('notes'):
+                print(n)
+                print(mido.Message('note_on', note=n.note, channel=msg.get('channel'), velocity=n.velocity))
+                # TODO Send MIDO MSG
+                id = f"{msg.get('channel')}.{n.note}"
+                self.notes_on[id] = self.internal_clock + n.duration
         return
 
 if __name__ == "__main__":
@@ -54,13 +57,13 @@ if __name__ == "__main__":
     m = MidiOut().start()
     c = MidiClock(120).start()
     # midi_bus.put(mido.Message('note_on', note=55, channel=1, velocity=99, duration=3))
-    midi_bus.put({'type': 'note_on', 'note': 33, 'channel': 1, 'velocity': 99, 'duration': 5})
-    midi_bus.put({'type': 'note_on', 'note': 22, 'channel': 1, 'velocity': 99, 'duration': 4})
+    midi_bus.put({'event': 'note_on', 'note': 33, 'channel': 1, 'velocity': 99, 'duration': 5})
+    midi_bus.put({'event': 'note_on', 'note': 22, 'channel': 1, 'velocity': 99, 'duration': 4})
     sleep(1)
-    midi_bus.put({'type': 'note_on', 'note': 22, 'channel': 2, 'velocity': 99, 'duration': 6})
-    midi_bus.put({'type': 'note_on', 'note': 22, 'channel': 1, 'velocity': 99, 'duration': 1})
+    midi_bus.put({'event': 'note_on', 'note': 22, 'channel': 2, 'velocity': 99, 'duration': 6})
+    midi_bus.put({'event': 'note_on', 'note': 22, 'channel': 1, 'velocity': 99, 'duration': 1})
     sleep(0.2)
-    midi_bus.put({'type': 'note_on', 'note': 22, 'channel': 2, 'velocity': 99, 'duration': 1})
-    midi_bus.put({'type': 'note_on', 'note': 22, 'channel': 1, 'velocity': 99, 'duration': 3})
+    midi_bus.put({'event': 'note_on', 'note': 22, 'channel': 2, 'velocity': 99, 'duration': 1})
+    midi_bus.put({'event': 'note_on', 'note': 22, 'channel': 1, 'velocity': 99, 'duration': 3})
     
     sleep(1)

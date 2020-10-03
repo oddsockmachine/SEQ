@@ -39,7 +39,7 @@ class Trellis(ActorThread):
         debug("Linking Trelli")
         self.trellis = MultiTrellis(trelli)
         debug("Trelli linked")
-        button_cb = self.make_cb()
+        button_cb = self.make_button_cb()
         debug("Initializing Trelli inputs")
         for y in range(H):
             for x in range(W):
@@ -51,7 +51,7 @@ class Trellis(ActorThread):
         debug("Inputs initialized")
         self.blank_screen()
 
-    def make_cb(self):
+    def make_button_cb(self):
         def button_cb(xcoord, ycoord, edge):
             if edge == NeoTrellis.EDGE_RISING:
                 post('button_grid', {'event': 'press', 'x': xcoord, 'y': H-1-ycoord})
@@ -61,9 +61,10 @@ class Trellis(ActorThread):
         return button_cb
 
     def blank_screen(self):
-        self.draw_grid([[BLANK for x in range(W)] for y in range(H)])
+        self.cb_draw_grid([[BLANK for x in range(W)] for y in range(H)])
 
-    def draw_grid(self, led_grid):
+    def cb_draw_grid(self, msg):
+        led_grid = msg['led_grid']
         diffs = []
         for x in range(len(self.old_led_matrix)):
             for y in range(len(self.old_led_matrix[x])):
@@ -89,8 +90,13 @@ class Trellis(ActorThread):
 
     def event_loop(self):
         # [x][y] = (r,g,b)
-        led_grid = receive('trellis')
-        self.draw_grid(led_grid)
+        msg = receive('trellis')
+        print(msg)
+        event = msg.get('event')
+        cb_name = f"cb_{event}"
+        result = getattr(self, cb_name, self.post_to_ins)(msg)
+
+        # self.cb_draw_grid(led_grid)
 
 
 if __name__ == "__main__":

@@ -37,3 +37,8 @@ How to mock hardware for local testing?
 
 Show all 8 tracks on front screen
 each instrument/grid needs method to show itself on one line - maybe brightness or color for note value
+
+synchronise beat number across instruments?
+Same beat across all?
+
+buses/mailboxes are named according to receiver

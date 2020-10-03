@@ -2,6 +2,7 @@ from constants import debug
 from actors import ActorThread, bus_registry, actor_registry, post, receive
 from datetime import datetime
 from note_grid import NoteGrid
+from config import W
 
 class Instrument(ActorThread):
     """"""
@@ -10,7 +11,7 @@ class Instrument(ActorThread):
         self.id = ins_num
         self.grid = NoteGrid()
         self.beat = 0
-        self.playing = False
+        self.playing = True
         self.selected_note = None
 
     def event_loop(self):
@@ -22,10 +23,12 @@ class Instrument(ActorThread):
     def cb_ctl_play(self, msg):
         self.playing = True
         return
-    def cb_ctl_step(self, msg):
+    def cb_midi_tick(self, msg):
         if self.playing:
-            self.beat += 1
-            post("midi_out", {})
+            self.beat = (self.beat + 1) % W
+            notes_on = self.grid.notes_at(self.beat)
+            # print(notes_on)
+            post("midi_out", {'event': 'note_on', 'notes': notes_on, 'channel': self.id})
         return
     def cb_ctl_stop(self, msg):
         self.playing = False
@@ -38,7 +41,7 @@ class Instrument(ActorThread):
         self.selected_note = None
         x = msg.get('x')
         y = msg.get('y')
-        self.grid.flip(x, y, 99)
+        self.grid.flip(x, y, y)
         # Select note x,y, save in self, allow manipulation by dials
         return
     def cb_long_click(self, msg):
@@ -57,7 +60,10 @@ class Instrument(ActorThread):
         return
     def cb_dial_click(self, msg):
         return
-    
+    # def cb_display(self, msg):
+    #     post('conductor', {'event': 'display'})
+
+
 if __name__ == '__main__':
     from time import sleep
     i = Instrument(0).start()
