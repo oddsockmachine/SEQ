@@ -18,7 +18,6 @@ class Instrument(ActorThread):
         event = msg.get('event')
         cb_name = f"cb_{event}"
         result = getattr(self, cb_name, self.cb_none)(msg)
-        
 
     def cb_ctl_play(self, msg):
         self.playing = True
@@ -30,30 +29,42 @@ class Instrument(ActorThread):
         return
     def cb_ctl_stop(self, msg):
         self.playing = False
+        print("stop")
         return
-    def cb_touch_press(self, msg):
+    def cb_touch(self, msg):
+        self.selected_note = None
         return
-    def cb_touch_click(self, msg):
+    def cb_short_click(self, msg):
+        self.selected_note = None
         x = msg.get('x')
         y = msg.get('y')
-        self.grid.add(x, y, 99)
+        self.grid.flip(x, y, 99)
         # Select note x,y, save in self, allow manipulation by dials
         return
-    def cb_touch_long(self, msg):
+    def cb_long_click(self, msg):
+        self.selected_note = (msg.get('x'), msg.get('y'))
         # Select note x,y, save in self, allow manipulation by dials
         return
     def cb_dial_turn(self, msg):
-        if self.selected_note:
-            pass
+        if not self.selected_note:
+            return
+        dir = msg.get('dir')
+        x, y = self.selected_note
+        if dir == '+':
+            self.grid.set_velocity(x,y,1)
+        elif dir == '-':
+            self.grid.set_velocity(x,y,-1)
         return
     def cb_dial_click(self, msg):
         return
     
 if __name__ == '__main__':
     from time import sleep
-    i = Instrument(0)
-    i.start()
-    print(dir(i))
+    i = Instrument(0).start()
     post('instrument0', {'event': 'ctl_stop', 'foo': 'bar'})
     post('instrument0', {'event': 'foo', 'foo': 'bar'})
+    post('instrument0', {'event': 'touch_click', 'x': 0, 'y': 1})
+    post('instrument0', {'event': 'ctl_step'})
+    sleep(1)
+    print(i.grid.display())
     sleep(1)

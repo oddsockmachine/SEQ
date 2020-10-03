@@ -25,6 +25,14 @@ class NoteGrid():
     def add(self, x, y, note, velocity=64, duration=1, modulation=0):
         self.grid[y][x].on(note, velocity, duration, modulation)
         return
+
+    def flip(self, x, y, note, velocity=64, duration=1, modulation=0):
+        note = self.grid[y][x]
+        if note.active:
+            note.off()
+        else:
+            note.on(note, velocity, duration, modulation)
+            
     
     def off(self, x, y):
         self.grid[y][x].off()
@@ -39,7 +47,7 @@ class NoteGrid():
 
     def set_velocity(x,y,v):
         # TODO constrain
-        self.grid[y][x].velocity = v
+        self.grid[y][x].velocity += v
         return
 
     def set_duration(x,y,d):

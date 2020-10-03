@@ -51,10 +51,8 @@ class MidiOut(ActorThread):
 
 if __name__ == "__main__":
     midi_bus = bus_registry.bus('midi_out')
-    m = MidiOut()
-    c = MidiClock(120)
-    m.start()
-    c.start()
+    m = MidiOut().start()
+    c = MidiClock(120).start()
     # midi_bus.put(mido.Message('note_on', note=55, channel=1, velocity=99, duration=3))
     midi_bus.put({'type': 'note_on', 'note': 33, 'channel': 1, 'velocity': 99, 'duration': 5})
     midi_bus.put({'type': 'note_on', 'note': 22, 'channel': 1, 'velocity': 99, 'duration': 4})

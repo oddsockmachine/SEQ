@@ -42,7 +42,10 @@ class ActorThread(Thread):
         self.keep_running = True
         self.bus = bus
         actor_registry.add(self)
+    
+    def start(self):
         super().start()
+        return self
 
     def run(self):
         debug(f"{self.__class__.__name__} started")
@@ -61,6 +64,7 @@ class ActorThread(Thread):
     
     def cb_none(self, msg):
         debug(f"unknown callback triggered: {msg.get('event')}")
+        print(f"unknown callback triggered: {msg.get('event')}")
 
 def post(bus_name, msg):
     b = bus_registry.bus(bus_name)
