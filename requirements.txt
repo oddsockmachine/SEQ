@@ -1,2 +1,3 @@
 mido==1.2.9
 Pykka==2.0.2
+python-rtmidi==1.4.5

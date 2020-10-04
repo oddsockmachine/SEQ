@@ -44,6 +44,7 @@ class Conductor(ActorThread):
     # def cb_long_click(self, msg):
     #     self.post_to_ins(msg)
     def event_loop(self):
+        # Not using default, because fall-through behaviour is to delegate to current instrument
         msg = receive("conductor")
         event = msg.get('event')
         cb_name = f"cb_{event}"
@@ -54,12 +55,14 @@ if __name__ == '__main__':
     from pprint import pprint
     from button_grid import ButtonGrid
     from midiout import MidiOut, MidiClock
+    from encoder import Encoder
+    from trellis import Trellis
     m = MidiOut().start()
     c = MidiClock(120).start()
-
+    e = Encoder(0).start()
     c = Conductor().start()
     b = ButtonGrid().start()
-    # t = Trellis().start()
+    t = Trellis('i2cbusgoeshere').start()
     post('button_grid', {'event': 'press', 'x': 1, 'y': 1})
     sleep(0.001)
     post('button_grid', {'event': 'release', 'x': 1, 'y': 1})
@@ -113,7 +116,8 @@ if __name__ == '__main__':
     post('conductor', {'event': 'select_ins', 'instrument': '+'})
     sleep(0.1)
     pprint(c.instruments[c.current_instrument].grid)
-    m = bus_registry.bus("midi_out")
-    for msg in m.queue:
-        print(msg)
+    
+    post('encoder0', {'event': 'set_color'})
+    post('encoder0', {'event': 'foo'})
     sleep(1)
+    bus_registry.purge()

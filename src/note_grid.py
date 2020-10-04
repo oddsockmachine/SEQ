@@ -1,7 +1,7 @@
 from constants import debug
 from datetime import datetime
 from pprint import pprint
-from config import H, W
+from config import H, W, STARTING_NOTE
 
 class NoteGrid():
     """DataStructure to store notes on a grid"""
@@ -29,12 +29,12 @@ class NoteGrid():
         self.grid[y][x].on(note, velocity, duration, modulation)
         return
 
-    def flip(self, x, y, n, velocity=64, duration=1, modulation=0):
+    def flip(self, x, y, velocity=64, duration=1, modulation=0):
         note = self.grid[y][x]
         if note.active:
             note.off()
         else:
-            note.on(n, velocity, duration, modulation)
+            note.on(STARTING_NOTE+y, velocity, duration, modulation)
             
     
     def off(self, x, y):
@@ -64,7 +64,7 @@ class NoteGrid():
         return
 
     def display(self):
-        """Return a grid representing LEd brightnesses based on Note velocties/durations"""
+        """Return a grid representing Led brightnesses based on Note velocties/durations"""
         d = [[0 for x in range(self.w)] for y in range(self.h)]
         for y, row in enumerate(self.grid):
             for x, note in enumerate(row):

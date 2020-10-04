@@ -14,8 +14,9 @@ class MidiClock(ActorThread):
         self.delay_s = 60 / bpm / 4
 
     def event_loop(self):
+        # Custom event loop
         sleep(self.delay_s)
-        post("midi_out", {'type': "tick"})
+        post("midiout", {'event': "tick"})
         post("conductor", {'event': "midi_tick"})
 
 class MidiOut(ActorThread):
@@ -24,15 +25,6 @@ class MidiOut(ActorThread):
         super().__init__()
         self.notes_on = {}
         self.internal_clock = 0
-
-    def event_loop(self):
-        # {'type': 'note_on', 'note': 22, 'channel': 1, 'velocity': 99, 'duration': 1}
-        msg = receive('midi_out')
-        if msg.get('event') == 'tick':
-            self.cb_tick(msg)
-        if msg.get('event') == 'note_on':
-           self.cb_note_on(msg)
-        return
 
     def cb_tick(self, msg):
         self.internal_clock += 1

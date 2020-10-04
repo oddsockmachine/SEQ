@@ -42,3 +42,16 @@ synchronise beat number across instruments?
 Same beat across all?
 
 buses/mailboxes are named according to receiver
+
+encoders + oleds
+1 select instrument
+  click to start/stop
+
+2 ??
+  click to ??
+
+3 duration
+  click to ??
+
+3 veloctiy
+  click to ??

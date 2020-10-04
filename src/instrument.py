@@ -7,18 +7,12 @@ from config import W
 class Instrument(ActorThread):
     """"""
     def __init__(self, ins_num):
-        super().__init__()
+        super().__init__(name=f"instrument{ins_num}")
         self.id = ins_num
         self.grid = NoteGrid()
         self.beat = 0
         self.playing = True
         self.selected_note = None
-
-    def event_loop(self):
-        msg = receive(f"instrument{self.id}")
-        event = msg.get('event')
-        cb_name = f"cb_{event}"
-        result = getattr(self, cb_name, self.cb_none)(msg)
 
     def cb_ctl_play(self, msg):
         self.playing = True
@@ -28,7 +22,7 @@ class Instrument(ActorThread):
             self.beat = (self.beat + 1) % W
             notes_on = self.grid.notes_at(self.beat)
             # print(notes_on)
-            post("midi_out", {'event': 'note_on', 'notes': notes_on, 'channel': self.id})
+            post("midiout", {'event': 'note_on', 'notes': notes_on, 'channel': self.id})
         return
     def cb_ctl_stop(self, msg):
         self.playing = False
@@ -41,7 +35,7 @@ class Instrument(ActorThread):
         self.selected_note = None
         x = msg.get('x')
         y = msg.get('y')
-        self.grid.flip(x, y, y)
+        self.grid.flip(x, y)
         # Select note x,y, save in self, allow manipulation by dials
         return
     def cb_long_click(self, msg):
