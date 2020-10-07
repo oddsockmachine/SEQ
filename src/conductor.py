@@ -8,7 +8,7 @@ class Conductor(ActorThread):
     """Multiplexor of instruments"""
     def __init__(self):
         super().__init__()
-        self.instruments = [Instrument(i).start() for i in range(2)]
+        self.instruments = [Instrument(i).start() for i in range(H)]
         self.current_instrument = 0
         self.beat = 0
         self.playing = False
@@ -37,6 +37,14 @@ class Conductor(ActorThread):
         elif type(ins) == int:
             self.current_instrument = ins
         return
+
+    def cb_encoder_0(self, msg):
+        action = msg['action']
+        dir = 1 if action == "inc" else -1
+        self.current_instrument = (self.current_instrument + dir) % H
+        print(self.current_instrument)
+        return
+
     # def cb_touch(self, msg):
     #     self.post_to_ins(msg)
     # def cb_short_click(self, msg):
@@ -119,5 +127,9 @@ if __name__ == '__main__':
     
     post('encoder0', {'event': 'set_color'})
     post('encoder0', {'event': 'foo'})
+    e.on_dec()
+    e.on_dec()
+    e.on_dec()
+    e.on_inc()
     sleep(1)
     bus_registry.purge()
