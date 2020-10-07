@@ -1,12 +1,4 @@
-Adafruit-Blinka==0.4.0
-adafruit-circuitpython-busdevice==2.2.7
-adafruit-circuitpython-framebuf==1.2.2
-adafruit-circuitpython-neotrellis==1.0.3
-adafruit-circuitpython-seesaw==1.2.6
-adafruit-circuitpython-ssd1306==2.7.3
-Adafruit-GPIO==1.0.3
-Adafruit-PureIO==0.2.3
-adafruit-circuitpython-tca9548a==0.3.1
 mido==1.2.9
 Pykka==2.0.2
 python-rtmidi==1.4.5
+recordclass==0.14.1
