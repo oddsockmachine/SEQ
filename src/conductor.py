@@ -51,7 +51,6 @@ class Conductor(ActorThread):
         return
 
     # def cb_encoder_2(self, msg):
-
     #     return
 
     def cb_encoder_3(self, msg):
