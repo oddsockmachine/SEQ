@@ -21,25 +21,29 @@ class MidiClock(ActorThread):
 
 class MidiOut(ActorThread):
     """Handle sending Midi messages to external devices"""
-    def __init__(self):
+    def __init__(self, midi_out_port):
         super().__init__()
         self.notes_on = {}
         self.internal_clock = 0
+        self.midi_out_port = midi_out_port
 
     def cb_tick(self, msg):
         self.internal_clock += 1
+        # print(mido.Message('clock'))
+        self.midi_out_port.send(mido.Message('clock'))
+
         off_notes = [note_id for note_id, off_time in self.notes_on.items() if off_time <= self.internal_clock] 
         for off_note in off_notes:
             channel, note = off_note.split('.')
             print(mido.Message('note_off', note=int(note), channel=int(channel)))
+            self.midi_out_port.send(mido.Message('note_off', note=int(note), channel=int(channel)))
             self.notes_on.pop(off_note)
         return
     def cb_note_on(self, msg):
         # if msg.get('event') == 'note_on':
         for n in msg.get('notes'):
-            print(n)
             print(mido.Message('note_on', note=n.note, channel=msg.get('channel'), velocity=n.velocity))
-            # TODO Send MIDO MSG
+            self.midi_out_port.send(mido.Message('note_on', note=n.note, channel=msg.get('channel'), velocity=n.velocity))
             id = f"{msg.get('channel')}.{n.note}"
             self.notes_on[id] = self.internal_clock + n.duration
         return

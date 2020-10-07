@@ -1,4 +1,12 @@
+class fakeMidiOut(object):
+    def __init__(self):
+        return
+    def send(self, m):
+        print(m)
+        return
+
 if __name__ == '__main__':
+    from mido import open_output
     from time import sleep
     from pprint import pprint
     from button_grid import ButtonGrid
@@ -7,7 +15,8 @@ if __name__ == '__main__':
     from trellis import Trellis
     from conductor import Conductor
     from actors import ActorThread, bus_registry, actor_registry, post, receive
-    m = MidiOut().start()
+    # m = MidiOut(open_output('seq_out', autoreset=True, virtual=True)).start()
+    m = MidiOut(fakeMidiOut()).start()
     c = MidiClock(120).start()
     e0 = Encoder(0).start()
     e1 = Encoder(1).start()
@@ -16,6 +25,8 @@ if __name__ == '__main__':
     c = Conductor().start()
     b = ButtonGrid().start()
     t = Trellis('i2cbusgoeshere').start()
+
+
     post('button_grid', {'event': 'press', 'x': 1, 'y': 1})
     sleep(0.001)
     post('button_grid', {'event': 'release', 'x': 1, 'y': 1})
@@ -79,5 +90,6 @@ if __name__ == '__main__':
     e0.on_dec()
     e0.on_dec()
     e0.on_inc()
+    pprint(t.old_led_matrix)
     sleep(1)
     bus_registry.purge()

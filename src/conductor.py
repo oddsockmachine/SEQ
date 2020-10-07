@@ -1,7 +1,7 @@
 from constants import debug
 from actors import ActorThread, bus_registry, actor_registry, post, receive
 from instrument import Instrument
-from config import H
+from config import H, W
 
 
 class Conductor(ActorThread):
@@ -18,12 +18,17 @@ class Conductor(ActorThread):
 
     def cb_display(self, msg):
         led_grid = self.instruments[self.current_instrument].grid.display()
+        led_grid = self.add_gridlines(led_grid)
         post('trellis', {'event': 'draw_grid', 'led_grid': led_grid})
 
+    def add_gridlines(self, led_grid):
+        print(self.beat)
+        for y in range(H):
+            led_grid[y][self.beat] = -1
+        return led_grid
+
     def cb_midi_tick(self, msg):
-        self.beat += 1
-        # self.post_to_ins(msg)
-        # Send tick to all instruments
+        self.beat = (self.beat + 1) % W
         for i in range(len(self.instruments)):
             post(f"instrument{i}", msg)
         self.cb_display({})

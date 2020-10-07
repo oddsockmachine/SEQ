@@ -44,17 +44,24 @@ Same beat across all?
 buses/mailboxes are named according to receiver
 
 encoders + oleds
-1 select instrument
+1 Global menu?
+  click to ??
+
+2 select instrument
   click to start/stop
 
-2 ??
-  click to ??
-
 3 duration
-  click to ??
+  click to reset?
 
 4 veloctiy
-  click to ??
+  click to reset?
 
 
 what happens if I increase duration, then add a new note before old note ends?
+Does midiout clock need to be 4x faster? tick and beat/
+
+color schemes!
+grid passed from notegrid/instrument has tuples of (R,G,B,type), where type = note|blank|selected|beat|tail
+
+
+mypy type hints?!
