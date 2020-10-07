@@ -32,31 +32,60 @@ class Instrument(ActorThread):
         self.selected_note = None
         return
     def cb_short_click(self, msg):
-        self.selected_note = None
         x = msg.get('x')
         y = msg.get('y')
+        self.selected_note = (x, y)
         self.grid.flip(x, y)
         # Select note x,y, save in self, allow manipulation by dials
         return
     def cb_long_click(self, msg):
-        self.selected_note = (msg.get('x'), msg.get('y'))
+        x = msg.get('x')
+        y = msg.get('y')
+        if self.selected_note == (x, y):
+            self.selected_note = None
+            return
+        if self.grid.grid[x][y].active:
+            self.selected_note = (msg.get('x'), msg.get('y'))
         # Select note x,y, save in self, allow manipulation by dials
         return
-    def cb_dial_turn(self, msg):
-        if not self.selected_note:
-            return
-        dir = msg.get('dir')
-        x, y = self.selected_note
-        if dir == '+':
-            self.grid.set_velocity(x,y,1)
-        elif dir == '-':
-            self.grid.set_velocity(x,y,-1)
-        return
-    def cb_dial_click(self, msg):
+    # def cb_dial_turn(self, msg):
+    #     if not self.selected_note:
+    #         return
+    #     dir = msg.get('dir')
+    #     x, y = self.selected_note
+    #     if dir == '+':
+    #         self.grid.set_velocity(x,y,1)
+    #     elif dir == '-':
+    #         self.grid.set_velocity(x,y,-1)
+    #     return
+    # def cb_dial_click(self, msg):
         return
     # def cb_display(self, msg):
     #     post('conductor', {'event': 'display'})
 
+    def cb_encoder_2(self, msg):
+        if not self.selected_note:
+            return
+        action = msg['action']
+        if action == 'push':
+            print("Push not implemented yet")
+            return
+        dir = 1 if action == "inc" else -1
+        x, y = self.selected_note
+        self.grid.set_duration(x, y, dir)
+        return
+
+    def cb_encoder_3(self, msg):
+        if not self.selected_note:
+            return
+        action = msg['action']
+        if action == 'push':
+            print("Push not implemented yet")
+            return
+        dir = 1 if action == "inc" else -1
+        x, y = self.selected_note
+        self.grid.set_velocity(x, y, dir)
+        return
 
 if __name__ == '__main__':
     from time import sleep

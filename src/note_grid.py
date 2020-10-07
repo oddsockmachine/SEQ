@@ -48,19 +48,22 @@ class NoteGrid():
             return int(b)
         return 0
 
-    def set_velocity(x,y,v):
+    def set_velocity(self, x,y,v):
         # TODO constrain
-        self.grid[y][x].velocity += v
+        if self.grid[y][x].active:
+            self.grid[y][x].velocity += v
         return
 
-    def set_duration(x,y,d):
+    def set_duration(self, x,y,d):
         # TODO constrain
-        self.grid[y][x].duration = d
+        if self.grid[y][x].active:
+            self.grid[y][x].duration += d
         return
     
-    def set_modulation(x,y,d):
+    def set_modulation(self, x,y,d):
         # TODO constrain
-        self.grid[y][x].modulation = d
+        if self.grid[y][x].active:
+            self.grid[y][x].modulation += d
         return
 
     def display(self):
@@ -101,6 +104,12 @@ class Note():
     
     def off(self):
         self.active = False
+        self.note = None
+        self.velocity = None
+        self.duration = None
+        self.modulation = None
+    
+
     
     def __repr__(self):
         if self.active:

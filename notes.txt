@@ -53,5 +53,8 @@ encoders + oleds
 3 duration
   click to ??
 
-3 veloctiy
+4 veloctiy
   click to ??
+
+
+what happens if I increase duration, then add a new note before old note ends?

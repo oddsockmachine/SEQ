@@ -83,19 +83,20 @@ class Encoder(ActorThread):
         # How to classify encoder messages?
         # determines how conductor and instrument handle callbacks
         # one cb for all encoder events, with all logic/delegation inside
-        # one cb for each encoder instance, deal with action type inside  < seems most reasonable
         # one cb for every action of each encoder - most number of cbs, but simple logic in each, easy passthrough
+        # one cb for each encoder instance, deal with action type inside  < seems most reasonable.
+        # Maybe a mix - share inc and dec, since they will have the same cb in the end, but separate for push
         # post('conductor', {'event': 'encoder', 'num': self.num, 'action': 'inc'})
-        post('conductor', {'event': f'encoder_{self.num}_inc', 'num': self.num, 'action': 'inc'})
+        # post('conductor', {'event': f'encoder_{self.num}_inc', 'num': self.num, 'action': 'inc'})
         post('conductor', {'event': f'encoder_{self.num}', 'num': self.num, 'action': 'inc'})
     def on_dec(self):
         # post('conductor', {'event': 'encoder', 'num': self.num, 'action': 'dec'})
-        post('conductor', {'event': f'encoder_{self.num}_dec', 'num': self.num, 'action': 'dec'})
+        # post('conductor', {'event': f'encoder_{self.num}_dec', 'num': self.num, 'action': 'dec'})
         post('conductor', {'event': f'encoder_{self.num}', 'num': self.num, 'action': 'dec'})
     def on_push(self):
         # post('conductor', {'event': 'encoder', 'num': self.num, 'action': 'push'})
         post('conductor', {'event': f'encoder_{self.num}_push', 'num': self.num, 'action': 'push'})
-        post('conductor', {'event': f'encoder_{self.num}_', 'num': self.num, 'action': 'push'})
+        # post('conductor', {'event': f'encoder_{self.num}_', 'num': self.num, 'action': 'push'})
     def cb_set_color(self, color):
         pass
         # self.encoder_hw.writeRGBCode(color)

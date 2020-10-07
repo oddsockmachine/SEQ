@@ -40,9 +40,22 @@ class Conductor(ActorThread):
 
     def cb_encoder_0(self, msg):
         action = msg['action']
+        if action == 'push':
+            print("Push not implemented yet")
+            return
         dir = 1 if action == "inc" else -1
         self.current_instrument = (self.current_instrument + dir) % H
-        print(self.current_instrument)
+        return
+
+    def cb_encoder_1(self, msg):
+        return
+
+    # def cb_encoder_2(self, msg):
+
+    #     return
+
+    def cb_encoder_3(self, msg):
+        self.post_to_ins(msg)
         return
 
     # def cb_touch(self, msg):
@@ -67,7 +80,10 @@ if __name__ == '__main__':
     from trellis import Trellis
     m = MidiOut().start()
     c = MidiClock(120).start()
-    e = Encoder(0).start()
+    e0 = Encoder(0).start()
+    e1 = Encoder(1).start()
+    e2 = Encoder(2).start()
+    e3 = Encoder(3).start()
     c = Conductor().start()
     b = ButtonGrid().start()
     t = Trellis('i2cbusgoeshere').start()
@@ -81,9 +97,9 @@ if __name__ == '__main__':
     sleep(0.001)
     post('button_grid', {'event': 'release', 'x': 3, 'y': 3})
     sleep(0.001)
-    post('button_grid', {'event': 'press', 'x': 5, 'y': 5})
+    post('button_grid', {'event': 'press', 'x': 2, 'y': 2})
     sleep(0.001)
-    post('button_grid', {'event': 'release', 'x': 5, 'y': 5})
+    post('button_grid', {'event': 'release', 'x': 2, 'y': 2})
     sleep(0.001)
     post('button_grid', {'event': 'press', 'x': 7, 'y': 7})
     sleep(0.001)
@@ -105,15 +121,15 @@ if __name__ == '__main__':
     post('button_grid', {'event': 'release', 'x': 1, 'y': 2})
     sleep(0.1)
 
-    post('button_grid', {'event': 'press', 'x': 1, 'y': 1})
+    post('button_grid', {'event': 'press', 'x': 5, 'y': 5})
     sleep(0.5)
-    post('button_grid', {'event': 'release', 'x': 1, 'y': 1})
+    post('button_grid', {'event': 'release', 'x': 5, 'y': 5})
     sleep(0.1)
 
     post('button_grid', {'event': 'press', 'x': 2, 'y': 3})
-    post('button_grid', {'event': 'press', 'x': 7, 'y': 7})
+    post('button_grid', {'event': 'press', 'x': 5, 'y': 5})
     sleep(0.4)
-    post('button_grid', {'event': 'release', 'x': 7, 'y': 7})
+    post('button_grid', {'event': 'release', 'x': 5, 'y': 5})
     sleep(0.2)
     post('button_grid', {'event': 'release', 'x': 2, 'y': 3})
     sleep(0.2)
@@ -122,14 +138,18 @@ if __name__ == '__main__':
     post('conductor', {'event': 'select_ins', 'instrument': '-'})
     post('conductor', {'event': 'select_ins', 'instrument': '-'})
     post('conductor', {'event': 'select_ins', 'instrument': '+'})
+    for i in range(20):
+        e2.on_inc()
+    for i in range(20):
+        e3.on_inc()
     sleep(0.1)
     pprint(c.instruments[c.current_instrument].grid)
     
     post('encoder0', {'event': 'set_color'})
     post('encoder0', {'event': 'foo'})
-    e.on_dec()
-    e.on_dec()
-    e.on_dec()
-    e.on_inc()
+    e0.on_dec()
+    e0.on_dec()
+    e0.on_dec()
+    e0.on_inc()
     sleep(1)
     bus_registry.purge()
