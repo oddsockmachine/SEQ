@@ -62,6 +62,13 @@ Does midiout clock need to be 4x faster? tick and beat/
 
 color schemes!
 grid passed from notegrid/instrument has tuples of (R,G,B,type), where type = note|blank|selected|beat|tail
+grid passed from notegrid/instrument has
+        positive values for note_on,
+        negative values for other types,
+        where type = note|blank|selected|beat|tail
+in conductor, start with simple grid of numbers
+        add ornamentation
+        then convert to pixels according to color scheme mapping
 
 
 mypy type hints?!

@@ -3,7 +3,7 @@ from datetime import datetime
 from pprint import pprint
 from config import H, W, STARTING_NOTE
 
-from pixel import Pixel, BLANK, NOTE, TAIL
+from pixel import BLANK
 
 class NoteGrid():
     """DataStructure to store notes on a grid"""
@@ -43,12 +43,12 @@ class NoteGrid():
         self.grid[y][x].off()
         return
 
-    # def note_to_bridghtness(self, note):
-    #     if note.active:
-    #         v = note.velocity
-    #         b = v/2+63
-    #         return int(b)
-    #     return 0
+    def note_to_bridghtness(self, note):
+        if note.active:
+            v = note.velocity
+            b = v/2+63
+            return int(b)
+        return 0
 
     def set_velocity(self, x,y,v):
         # TODO constrain
@@ -70,19 +70,22 @@ class NoteGrid():
 
     def display(self):
         """Return a grid representing Led brightnesses based on Note velocties/durations"""
-        d = [[Pixel(0,0,0,BLANK) for x in range(self.w)] for y in range(self.h)]
+        d = [[BLANK for x in range(self.w)] for y in range(self.h)]
         for y, row in enumerate(self.grid):
             for x, note in enumerate(row):
                 if not note.active:  # Don't bother if note isn't active
                     continue
-                # b = self.note_to_bridghtness(note)
-                d[y][x].type = NOTE
+                b = self.note_to_bridghtness(note)
+                # d[y][x].type = NOTE
+                d[y][x] = b
                 # print(d[y][x])
                 if note.duration > 1:  # If there is a sustain tail
                     for s in range(1,note.duration):  # For each cell in the sustail tail
                         if not self.grid[y][x+s].active:  # Cutoff if other note here
-                            d[y][x+s].type = TAIL  # Tail is half brightness
+                            d[y][x+s] = int(b/2)  # Tail is half brightness
                             # print(d[y][x+s])
+                            # t = int(b/2)
+                            # d[y][x+s] = Pixel(t,t,t,NOTE)
                         else:
                             break
         return d

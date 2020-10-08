@@ -90,6 +90,7 @@ if __name__ == '__main__':
     e0.on_dec()
     e0.on_dec()
     e0.on_inc()
-    pprint(t.old_led_matrix)
+    leds = t.old_led_matrix
+    print("\n".join([" ".join([str(x[0]).ljust(3) for x in row]) for row in leds]))
     sleep(1)
     bus_registry.purge()

@@ -2,7 +2,7 @@ from constants import debug
 from actors import ActorThread, bus_registry, actor_registry, post, receive
 from instrument import Instrument
 from config import H, W
-
+from pixel import GRID_4, GRID_8, BEAT, SELECTED, NOTE, BLANK, color_scheme
 
 class Conductor(ActorThread):
     """Multiplexor of instruments"""
@@ -17,15 +17,34 @@ class Conductor(ActorThread):
         post(f"instrument{self.current_instrument}", msg)
 
     def cb_display(self, msg):
+        # Raw grid of notes, velocities and tails
         led_grid = self.instruments[self.current_instrument].grid.display()
-        led_grid = self.add_gridlines(led_grid)
-        post('trellis', {'event': 'draw_grid', 'led_grid': led_grid})
-
-    def add_gridlines(self, led_grid):
-        print(self.beat)
+        # Add ornamentation
         for y in range(H):
-            led_grid[y][self.beat] = -1
-        return led_grid
+            # add_gridlines
+            for x in range(3, W, 8):
+                if led_grid[y][x] == BLANK:
+                    led_grid[y][x] = GRID_4
+                if led_grid[y][x+4] == BLANK:
+                    led_grid[y][x+4] = GRID_8
+            # add_beat_marker
+            if led_grid[y][self.beat] == NOTE:
+                led_grid[y][self.beat] = BEAT_ON
+            else:
+                led_grid[y][self.beat] = BEAT
+        # add_selected_note
+        s_n = self.instruments[self.current_instrument].selected_note
+        if s_n:
+            led_grid[s_n[1]][s_n[0]] = SELECTED
+        # Convert according to color scheme
+        for y in range(H):
+            for x in range(W):
+                led_grid[y][x] = color_scheme(led_grid[y][x], x, y)
+        post('trellis', {'event': 'draw_grid', 'led_grid': led_grid})
+        return
+        
+
+
 
     def cb_midi_tick(self, msg):
         self.beat = (self.beat + 1) % W
