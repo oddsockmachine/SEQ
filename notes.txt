@@ -61,6 +61,10 @@ what happens if I increase duration, then add a new note before old note ends?
 Does midiout clock need to be 4x faster? tick and beat/
 
 color schemes!
+        retro green, orange, black
+        synthwave ice blue, pink, neon purple
+        akai fire style gentle gradients
+
 grid passed from notegrid/instrument has tuples of (R,G,B,type), where type = note|blank|selected|beat|tail
 grid passed from notegrid/instrument has
         positive values for note_on,
@@ -72,3 +76,4 @@ in conductor, start with simple grid of numbers
 
 
 mypy type hints?!
+

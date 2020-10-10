@@ -27,4 +27,6 @@ pallette = {
 }
 
 def color_scheme(_type, x, y):
+    """Lookup color for particular type. 
+    If not found, this is a note with velocity, so create a color based on that"""
     return pallette.get(_type, (_type, _type, _type))

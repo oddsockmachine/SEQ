@@ -6,6 +6,13 @@ class fakeMidiOut(object):
         return
 
 if __name__ == '__main__':
+
+
+    from board import SCL, SDA
+    import busio
+    debug("Creating i2c bus")
+    I2C_BUS = busio.I2C(SCL, SDA)
+    print(I2C_BUS)
     from mido import open_output
     from time import sleep
     from pprint import pprint
@@ -24,8 +31,9 @@ if __name__ == '__main__':
     e3 = Encoder(3).start()
     c = Conductor().start()
     b = ButtonGrid().start()
-    t = Trellis('i2cbusgoeshere').start()
-
+    t = Trellis(I2C_BUS).start()
+    print("SETUP COMPLETE")
+    exit()
 
     post('button_grid', {'event': 'press', 'x': 1, 'y': 1})
     sleep(0.001)
