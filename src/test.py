@@ -10,7 +10,7 @@ if __name__ == '__main__':
 
     from board import SCL, SDA
     import busio
-    debug("Creating i2c bus")
+    print("Creating i2c bus")
     I2C_BUS = busio.I2C(SCL, SDA)
     print(I2C_BUS)
     from mido import open_output
