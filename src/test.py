@@ -22,6 +22,10 @@ if __name__ == '__main__':
     from trellis import Trellis
     from conductor import Conductor
     from actors import ActorThread, bus_registry, actor_registry, post, receive
+    t = Trellis(I2C_BUS).start()
+    sleep(30)
+    print("SETUP COMPLETE")
+    exit()
     # m = MidiOut(open_output('seq_out', autoreset=True, virtual=True)).start()
     m = MidiOut(fakeMidiOut()).start()
     c = MidiClock(120).start()
@@ -31,9 +35,6 @@ if __name__ == '__main__':
     e3 = Encoder(3).start()
     c = Conductor().start()
     b = ButtonGrid().start()
-    t = Trellis(I2C_BUS).start()
-    print("SETUP COMPLETE")
-    exit()
 
     post('button_grid', {'event': 'press', 'x': 1, 'y': 1})
     sleep(0.001)
