@@ -38,7 +38,7 @@ class Trellis(ActorThread):
                 sleep(0.1)
                 pass
         debug("Linking Trelli")
-        self.trellis = MultiTrellis(trelli)
+        self.trellis = MultiTrellis(self.trelli)
         debug("Trelli linked")
         button_cb = self.make_button_cb()
         debug("Initializing Trelli inputs")
