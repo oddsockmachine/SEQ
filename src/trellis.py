@@ -29,7 +29,7 @@ class Trellis(ActorThread):
         self.led_matrix = [[BLANK for x in range(W)] for y in range(H)]
         self.old_led_matrix = [[BLANK for x in range(W)] for y in range(H)]
         self.trelli = [[] for i in range(int(H/4))]  # [[],[]]
-        debug("Creating Trelli")
+        print("Creating Trelli")
         for x, slice in enumerate(trellis_addresses):
             for y, addr in enumerate(slice):
                 t = NeoTrellis(i2c_bus, False, addr=addr)
@@ -37,11 +37,11 @@ class Trellis(ActorThread):
                 self.trelli[x].append(t)
                 sleep(0.1)
                 pass
-        debug("Linking Trelli")
+        print("Linking Trelli")
         self.trellis = MultiTrellis(self.trelli)
-        debug("Trelli linked")
+        print("Trelli linked")
         button_cb = self.make_button_cb()
-        debug("Initializing Trelli inputs")
+        print("Initializing Trelli inputs")
         for y in range(H):
             for x in range(W):
                 pass
