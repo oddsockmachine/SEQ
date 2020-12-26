@@ -8,11 +8,11 @@ class fakeMidiOut(object):
 if __name__ == '__main__':
 
 
-    from board import SCL, SDA
-    import busio
-    print("Creating i2c bus")
-    I2C_BUS = busio.I2C(SCL, SDA)
-    print(I2C_BUS)
+    # from board import SCL, SDA
+    # import busio
+    # print("Creating i2c bus")
+    # I2C_BUS = busio.I2C(SCL, SDA)
+    # print(I2C_BUS)
     from mido import open_output
     from time import sleep
     from pprint import pprint
@@ -22,10 +22,10 @@ if __name__ == '__main__':
     from trellis import Trellis
     from conductor import Conductor
     from actors import ActorThread, bus_registry, actor_registry, post, receive
-    t = Trellis(I2C_BUS).start()
-    sleep(30)
-    print("SETUP COMPLETE")
-    exit()
+    # t = Trellis(I2C_BUS).start()
+    # sleep(30)
+    # print("SETUP COMPLETE")
+    # exit()
     # m = MidiOut(open_output('seq_out', autoreset=True, virtual=True)).start()
     m = MidiOut(fakeMidiOut()).start()
     c = MidiClock(120).start()
@@ -33,8 +33,8 @@ if __name__ == '__main__':
     e1 = Encoder(1).start()
     e2 = Encoder(2).start()
     e3 = Encoder(3).start()
-    c = Conductor().start()
     b = ButtonGrid().start()
+    c = Conductor().start()
 
     post('button_grid', {'event': 'press', 'x': 1, 'y': 1})
     sleep(0.001)
@@ -99,7 +99,7 @@ if __name__ == '__main__':
     e0.on_dec()
     e0.on_dec()
     e0.on_inc()
-    leds = t.old_led_matrix
-    print("\n".join([" ".join([str(x[0]).ljust(3) for x in row]) for row in leds]))
-    sleep(1)
+    # leds = t.old_led_matrix
+    # print("\n".join([" ".join([str(x[0]).ljust(3) for x in row]) for row in leds]))
+    sleep(0.1)
     bus_registry.purge()

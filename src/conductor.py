@@ -2,7 +2,7 @@ from constants import debug
 from actors import ActorThread, bus_registry, actor_registry, post, receive
 from instrument import Instrument
 from config import H, W
-from pixel import GRID_4, GRID_8, BEAT, SELECTED, NOTE, BLANK, color_scheme
+from pixel import GRID_4, GRID_8, BEAT, BEAT_ON, SELECTED, NOTE, BLANK, color_scheme
 
 class Conductor(ActorThread):
     """Multiplexor of instruments"""

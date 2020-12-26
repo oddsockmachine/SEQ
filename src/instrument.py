@@ -3,6 +3,7 @@ from actors import ActorThread, bus_registry, actor_registry, post, receive
 from datetime import datetime
 from note_grid import NoteGrid
 from config import W
+from constants import debug
 
 class Instrument(ActorThread):
     """"""
@@ -20,6 +21,7 @@ class Instrument(ActorThread):
     def cb_midi_tick(self, msg):
         if self.playing:
             self.beat = (self.beat + 1) % W
+            # debug(str(self.id) +"/" + str(self.beat))
             notes_on = self.grid.notes_at(self.beat)
             # print(notes_on)
             post("midiout", {'event': 'note_on', 'notes': notes_on, 'channel': self.id})
